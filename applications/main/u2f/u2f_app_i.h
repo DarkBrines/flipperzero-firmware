@@ -15,6 +15,7 @@
 #include "views/u2f_view.h"
 #include "u2f_hid.h"
 #include "u2f.h"
+#include "u2f_config.h"
 
 typedef enum {
     U2fAppErrorNoFiles,
@@ -41,10 +42,7 @@ typedef enum {
 
 } GpioCustomEvent;
 
-typedef enum {
-    U2fAppViewError,
-    U2fAppViewMain,
-} U2fAppView;
+typedef enum { U2fAppViewError, U2fAppViewMain, U2fAppViewConfig } U2fAppView;
 
 struct U2fApp {
     Gui* gui;
@@ -59,4 +57,7 @@ struct U2fApp {
     GpioCustomEvent event_cur;
     bool u2f_ready;
     U2fAppError error;
+
+    VariableItemList* config_view;
+    U2fConfig* config;
 };

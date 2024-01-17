@@ -1,6 +1,7 @@
 #include "u2f.h"
 #include "u2f_hid.h"
 #include "u2f_data.h"
+#include "u2f_config.h"
 
 #include <furi.h>
 #include <furi_hal.h>
@@ -100,6 +101,8 @@ struct U2fData {
     U2fEvtCallback callback;
     void* context;
     mbedtls_ecp_group group;
+
+    U2fConfig* config;
 };
 
 static int u2f_uecc_random_cb(void* context, uint8_t* dest, unsigned size) {
@@ -120,6 +123,10 @@ void u2f_free(U2fData* U2F) {
 
 bool u2f_init(U2fData* U2F) {
     furi_assert(U2F);
+
+    if(u2f_config_load(U2F->config) == false) {
+        FURI_LOG_W(TAG, "Settings load error, using default");
+    }
 
     if(u2f_data_cert_check() == false) {
         FURI_LOG_E(TAG, "Certificate load error");

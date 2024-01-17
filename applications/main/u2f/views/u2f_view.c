@@ -1,6 +1,7 @@
 #include "u2f_view.h"
 #include <gui/elements.h>
 #include <assets_icons.h>
+#include <u2f_app_i.h>
 
 struct U2fView {
     View* view;
@@ -16,6 +17,7 @@ static void u2f_view_draw_callback(Canvas* canvas, void* _model) {
     U2fModel* model = _model;
 
     canvas_draw_icon(canvas, 8, 14, &I_Drive_112x35);
+    elements_button_left(canvas, "Config");
     canvas_set_font(canvas, FontSecondary);
 
     if(model->display_msg == U2fMsgNotConnected) {
@@ -47,12 +49,16 @@ static void u2f_view_draw_callback(Canvas* canvas, void* _model) {
 static bool u2f_view_input_callback(InputEvent* event, void* context) {
     furi_assert(context);
     U2fView* u2f = context;
+    U2fApp* app = u2f->context;
     bool consumed = false;
 
     if(event->type == InputTypeShort) {
         if(event->key == InputKeyOk) {
             consumed = true;
             if(u2f->callback != NULL) u2f->callback(InputTypeShort, u2f->context);
+        } else if(event->key == InputKeyLeft) {
+            consumed = true;
+            scene_manager_next_scene(app->scene_manager, U2fSceneConfig);
         }
     }
 
